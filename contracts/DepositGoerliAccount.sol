@@ -1,18 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.6.00;
-
+pragma solidity ^0.8.17.0;
 contract DepositGoerliAccount {
-    address owner;
+    address public owner;
 
     event DepositEvent(
         bytes pubkey,
-        bytes withdrawal_credentials,
-        bytes amount,
-        bytes signature,
-        bytes index
+        bytes amount
     );
 
-    constructor() {
+    constructor(){
         owner = msg.sender;
     }
 
@@ -20,15 +16,22 @@ contract DepositGoerliAccount {
         require(msg.sender == owner);
         _;
     }
-    modifier hasBalance(uint256 amount) {
-        require(address(this).balance >= amount);
-        _;
-    }
 
-    function depositGoerli(
-        bytes calldata pubkey,
-        bytes calldata withdrawal_credentials,
-        bytes calldata signature,
-        bytes32 deposit_data_root
-    ) external payable {}
+
+    
+    function depositGoerli(bytes calldata pubkey) payable external {
+        require(pubkey.length == 48, "DepositContract: invalid pubkey length");
+
+        // Check deposit amount
+        require(msg.value >= 0.01 ether, "DepositContract: deposit value too low");
+
+        uint deposit_amount = msg.value / 1 gwei;
+        require(deposit_amount <= type(uint64).max, "DepositContract: deposit value too high");
+
+        
+        emit DepositEvent(
+            pubkey,
+            abi.encodePacked(deposit_amount)
+        );
+    }
 }
