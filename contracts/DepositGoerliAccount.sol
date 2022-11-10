@@ -1,49 +1,70 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17.0;
+
 contract DepositGoerliAccount {
     address public owner;
     bool public paused;
+    uint public limit;
+    uint public balance;
 
     event DepositEvent(
         address sender,
         bytes amount
     );
-
-    constructor(){
-        owner = msg.sender;
+    
+    constructor(uint _limit){
+      owner = msg.sender;
+      limit = _limit;
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "You are not the owner");
+        require(msg.sender == owner, "DepositGoerliAccount: You are not the owner.");
         _;
     }
 
     modifier notPaused(){
-        require(paused == false, "Contract Paused");
+        require(paused == false, "DepositGoerliAccount: Contract is Paused now. Please try again later.");
         _;
     }
 
-    function setPaused(bool _paused) public onlyOwner{
-        paused = _paused;
+    modifier balanceLimitNotReached(){
+        require(balance / 1 ether < limit, "DepositGoerliAccount: The contract is holding the maximum tokens it can hold.");
+        _;
     }
-   
-    function depositGoerli() payable external {
-        // require(pubkey.length == 48, "DepositContract: invalid pubkey length");
 
+    modifier withinLimit(){
         // Check deposit amount
-        require(msg.value >= 0.01 ether, "DepositContract: deposit value too low");
+        require(msg.value >= 0.01 ether && msg.value / 1 ether <= limit, "DepositGoerliAccount: The deposit amount is lower or higher than the limit.");
+        _;
+    }
 
-        uint deposit_amount = msg.value / 1 gwei;
-        require(deposit_amount <= type(uint64).max, "DepositContract: deposit value too high");
+    function pauseContract() public onlyOwner{
+        paused = true;
+    }
+
+    function resumeContract() public onlyOwner{
+        paused = false;
+    }
+
+    function depositGoerliEth() payable external balanceLimitNotReached notPaused withinLimit{
+        
+        balance += msg.value;
       
         emit DepositEvent(
             msg.sender,
-            abi.encodePacked(deposit_amount)
+            abi.encodePacked(msg.value)
         );
+
     }
 
     function withdrawAllMoney(address payable _to) public onlyOwner notPaused{     
         _to.transfer(address(this).balance);
+        balance = 0;
+    }
+
+    function withdrawAmount(address payable _to, uint amount) public onlyOwner notPaused{     
+        _to.transfer(amount*1 ether); 
+        balance -=  amount*1 ether;     
     }
     
     function destroySmartContract(address payable _to) public onlyOwner{      
