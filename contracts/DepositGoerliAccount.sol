@@ -8,8 +8,8 @@ contract DepositGoerliAccount {
     uint public balance;
 
     event DepositEvent(
-        address sender,
-        bytes amount
+        address indexed sender,
+        bytes indexed amount
     );
     
     constructor(uint _limit){
