@@ -9,7 +9,7 @@ contract DepositGoerliAccount {
 
     event DepositEvent(
         address indexed sender,
-        bytes indexed amount
+        uint indexed amount
     );
     
     constructor(uint _limit){
@@ -52,7 +52,7 @@ contract DepositGoerliAccount {
       
         emit DepositEvent(
             msg.sender,
-            abi.encodePacked(msg.value)
+            msg.value/ 1 ether
         );
 
     }
