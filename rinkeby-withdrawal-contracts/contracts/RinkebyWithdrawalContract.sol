@@ -35,7 +35,7 @@ contract RinkebyDistributorAccount {
     modifier withinBalance(uint amount) {
         // Check deposit amount
         require(
-            amount / 1 ether <= balance,
+            amount >= 0.01 ether && amount / 1 ether <= balance,
             "RinkebyDistributorAccount: The transfer amount requested is higher than the current balance."
         );
         _;
