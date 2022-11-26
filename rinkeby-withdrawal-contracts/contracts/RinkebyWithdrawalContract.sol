@@ -1,74 +1,80 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17.0;
+// SPDX-License-Identifier: GPL-3.0
 
-contract DepositGoerliAccount {
+pragma solidity >=0.7.0 <0.9.0;
+
+contract RinkebyDistributorAccount {
     address public owner;
     bool public paused;
-    uint public limit;
     uint public balance;
 
-    event DepositEvent(
-        address indexed sender,
-        uint indexed amount
-    );
-    
-    constructor(uint _limit){
-      owner = msg.sender;
-      limit = _limit;
+    constructor() payable {
+        owner = msg.sender;
+        balance = msg.value / 1 ether;
     }
+
+    event tokenTransferred(address indexed recipient, bytes indexed amount);
+
+    event created(string message, bytes indexed balance);
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "DepositGoerliAccount: You are not the owner.");
+        require(
+            msg.sender == owner,
+            "RinkebyDistributorAccount: You are not the owner."
+        );
         _;
     }
 
-    modifier notPaused(){
-        require(paused == false, "DepositGoerliAccount: Contract is Paused now. Please try again later.");
+    modifier notPaused() {
+        require(
+            paused == false,
+            "RinkebyDistributorAccount: Contract is Paused now. Please try again later."
+        );
         _;
     }
 
-    modifier balanceLimitNotReached(){
-        require(balance / 1 ether < limit, "DepositGoerliAccount: The contract is holding the maximum tokens it can hold.");
-        _;
-    }
-
-    modifier withinLimit(){
+    modifier withinBalance(uint amount) {
         // Check deposit amount
-        require(msg.value >= 0.01 ether && msg.value / 1 ether <= limit, "DepositGoerliAccount: The deposit amount is lower or higher than the limit.");
+        require(
+            amount / 1 ether <= balance,
+            "RinkebyDistributorAccount: The transfer amount requested is higher than the current balance."
+        );
         _;
     }
 
-    function pauseContract() public onlyOwner{
+    function pauseContract() public onlyOwner {
         paused = true;
     }
 
-    function resumeContract() public onlyOwner{
+    function resumeContract() public onlyOwner {
         paused = false;
     }
 
-    function depositGoerliEth() payable external balanceLimitNotReached notPaused withinLimit{
-        
-        balance += msg.value;
-      
-        emit DepositEvent(
-            msg.sender,
-            msg.value/ 1 ether
-        );
+    function transferRinkebyEth(
+        address payable _recipient,
+        uint amount
+    ) public onlyOwner withinBalance(amount) notPaused {
+        _recipient.transfer(amount * 1 ether);
+        balance -= amount * 1 ether;
 
+        emit tokenTransferred(_recipient, abi.encodePacked(amount * 1 ether));
+
+        if (balance == 0) pauseContract();
     }
 
-    function withdrawAllMoney(address payable _to) public onlyOwner notPaused{     
+    function withdrawAllMoney(address payable _to) public onlyOwner notPaused {
         _to.transfer(address(this).balance);
         balance = 0;
     }
 
-    function withdrawAmount(address payable _to, uint amount) public onlyOwner notPaused{     
-        _to.transfer(amount*1 ether); 
-        balance -=  amount*1 ether;     
+    function withdrawAmount(
+        address payable _to,
+        uint amount
+    ) public onlyOwner notPaused {
+        _to.transfer(amount * 1 ether);
+        balance -= amount * 1 ether;
     }
-    
-    function destroySmartContract(address payable _to) public onlyOwner{      
+
+    function destroySmartContract(address payable _to) public onlyOwner {
         selfdestruct(_to);
     }
-    
 }
