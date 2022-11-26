@@ -35,7 +35,7 @@ contract RinkebyDistributorAccount {
     modifier withinBalance(uint amount) {
         // Check deposit amount
         require(
-            amount >= 0.01 ether && amount / 1 ether <= balance,
+            amount >= 0 && amount <= balance,
             "RinkebyDistributorAccount: The transfer amount requested is higher than the current balance."
         );
         _;
@@ -54,9 +54,9 @@ contract RinkebyDistributorAccount {
         uint amount
     ) public onlyOwner withinBalance(amount) notPaused {
         _recipient.transfer(amount * 1 ether);
-        balance -= amount * 1 ether;
+        balance -= amount;
 
-        emit tokenTransferred(_recipient, abi.encodePacked(amount * 1 ether));
+        emit tokenTransferred(_recipient, abi.encodePacked(amount));
 
         if (balance == 0) pauseContract();
     }
