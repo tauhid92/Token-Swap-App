@@ -52,7 +52,7 @@ contract RinkebyDistributorAccount {
     function transferRinkebyEth(
         address payable _recipient,
         uint amount
-    ) public onlyOwner withinBalance(amount) notPaused {
+    ) public onlyOwner notPaused withinBalance(amount) {
         _recipient.transfer(amount * 1 ether);
         balance -= amount;
 
