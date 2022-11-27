@@ -1,3 +1,4 @@
+import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect, assert } from "chai";
 import { ethers } from "hardhat";
@@ -121,12 +122,13 @@ describe("Rinkeby Distributor Contract", () => {
         .withArgs(otherAccount.address, 500000000);
     });
     it("should emit created event with right balance", async () => {
-      const { rinkeby, owner, otherAccount } = await loadFixture(
-        deployRinkebyDistributorFixture
-      );
-      // const filterFrom = rinkeby.filters;
-      console.log(rinkeby.filters.created);
-      // await expect(rinkeby.deployed()).to.emit(rinkeby, "created");
+      const { rinkeby } = await loadFixture(deployRinkebyDistributorFixture);
+
+      const event = rinkeby.filters.created("created", 1000000000);
+      const logsForm = await rinkeby.queryFilter(event, -10, "latest");
+
+      expect(logsForm).to.be.not.empty;
+      assert.equal(logsForm[0].event, "created");
     });
   });
 
