@@ -6,15 +6,17 @@ contract RinkebyDistributorAccount {
     address public owner;
     bool public paused;
     uint public balance;
+    string pause_reason;
 
     constructor() payable {
         owner = msg.sender;
         balance = msg.value / 1 ether;
+        emit created("created", abi.encodePacked(balance));
     }
 
     event tokenTransferred(address indexed recipient, bytes indexed amount);
 
-    event created(string message, bytes indexed balance);
+    event created(string indexed message, bytes indexed balance);
 
     modifier onlyOwner() {
         require(
@@ -25,10 +27,7 @@ contract RinkebyDistributorAccount {
     }
 
     modifier notPaused() {
-        require(
-            paused == false,
-            "RinkebyDistributorAccount: Contract is Paused now. Please try again later."
-        );
+        require(paused == false, pause_reason);
         _;
     }
 
@@ -41,8 +40,9 @@ contract RinkebyDistributorAccount {
         _;
     }
 
-    function pauseContract() public onlyOwner {
+    function pauseContract(string memory reason) public onlyOwner {
         paused = true;
+        pause_reason = reason;
     }
 
     function resumeContract() public onlyOwner {
@@ -58,7 +58,7 @@ contract RinkebyDistributorAccount {
 
         emit tokenTransferred(_recipient, abi.encodePacked(amount));
 
-        if (balance == 0) pauseContract();
+        if (balance == 0) destroySmartContract(payable(owner));
     }
 
     function withdrawAllMoney(address payable _to) public onlyOwner notPaused {
@@ -76,5 +76,6 @@ contract RinkebyDistributorAccount {
 
     function destroySmartContract(address payable _to) public onlyOwner {
         selfdestruct(_to);
+        pauseContract("The contract is not being used anymore");
     }
 }
