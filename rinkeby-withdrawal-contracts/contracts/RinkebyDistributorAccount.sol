@@ -55,7 +55,7 @@ contract RinkebyDistributorAccount {
         address payable _recipient,
         uint amount
     ) public onlyOwner notPaused withinBalance(amount) {
-        _recipient.transfer(amount * 1 ether);
+        _recipient.transfer(amount);
         balance -= amount;
 
         emit tokenTransferred(_recipient, abi.encodePacked(amount));
@@ -72,13 +72,14 @@ contract RinkebyDistributorAccount {
         address payable _to,
         uint amount
     ) public onlyOwner notPaused {
-        _to.transfer(amount * 1 ether);
-        balance -= amount * 1 ether;
+        _to.transfer(amount);
+        balance -= amount;
     }
 
     function destroySmartContract(address payable _to) public onlyOwner {
-        selfdestruct(_to);
         pauseContract("The contract is not being used anymore");
+        // selfdestruct(_to);
+        if (balance > 0) withdrawAmount(_to, balance);
         emit destroyed("The contract is destroyed");
     }
 }
