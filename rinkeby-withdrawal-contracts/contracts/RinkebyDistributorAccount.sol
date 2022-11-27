@@ -11,12 +11,12 @@ contract RinkebyDistributorAccount {
     constructor() payable {
         owner = msg.sender;
         balance = msg.value;
-        emit created("created", abi.encodePacked(balance));
+        emit created("created", balance);
     }
 
     event tokenTransferred(address indexed recipient, uint indexed amount);
 
-    event created(string indexed message, bytes indexed balance);
+    event created(string indexed message, uint indexed balance);
 
     event destroyed(string indexed message);
 
