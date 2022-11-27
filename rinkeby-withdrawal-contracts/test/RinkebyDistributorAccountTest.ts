@@ -77,26 +77,56 @@ describe("Rinkeby Distributor Contract", () => {
       const { rinkeby } = await loadFixture(deployRinkebyDistributorFixture);
       const testValue = ethers.BigNumber.from("1000000000");
       const balance = await rinkeby.balance();
-      assert.equal(await balance.eq(testValue), true);
+      await expect(balance.eq(testValue)).to.be.true;
     });
-    it("should show the correct balance after transaction", async () => {});
+
+    it("should show the correct balance after transaction", async () => {
+      const { rinkeby, owner, otherAccount } = await loadFixture(
+        deployRinkebyDistributorFixture
+      );
+      await rinkeby
+        .connect(owner)
+        .transferRinkebyEth(otherAccount.address, "500000000");
+      const testValue = ethers.BigNumber.from("500000000");
+      const balance = await rinkeby.balance();
+      await expect(balance.eq(testValue)).to.be.true;
+    });
   });
 
   describe("Pause", () => {
-    it("should be paused when balance hits zero", async () => {});
-    it("should be paused when owner decides to pause it", async () => {});
-    it("should resume when owner decides to resume it", async () => {});
+    it("should be paused when balance hits zero", async () => {
+      const { rinkeby, owner, otherAccount } = await loadFixture(
+        deployRinkebyDistributorFixture
+      );
+      await rinkeby
+        .connect(owner)
+        .transferRinkebyEth(otherAccount.address, "1000000000");
+      assert.equal(await rinkeby.paused(), true);
+    });
+    it("should resume when owner decides to resume it", async () => {
+      const { rinkeby, owner } = await loadFixture(
+        deployRinkebyDistributorFixture
+      );
+      await rinkeby
+        .connect(owner)
+        .pauseContract(
+          "RinkebyDistributorAccount: The contract is temporarily paused"
+        );
+      assert.equal(await rinkeby.paused(), true);
+      await rinkeby.connect(owner).resumeContract();
+      assert.equal(await rinkeby.paused(), false);
+    });
   });
 
   describe("Events", () => {
     it("should emit token transfer event for the right address with right amount", async () => {});
-    it("should emit created event with right balance", async () => {});
+    // it("should emit created event with right balance", async () => {});
   });
 
-  describe("Transfer", () => {
-    it("should only let owner transfer the tokens", async () => {});
-    it("should transfer only within balance", async () => {});
-    it("should revert if amount is higher than the balance", async () => {});
-    it("should revert if amount to be transferred is equal to zero", async () => {});
-  });
+  // describe("Transfer", () => {
+  //   it("should only let owner transfer the tokens", async () => {});
+  //   it("should transfer only within balance", async () => {});
+  //   it("should revert if amount is higher than the balance", async () => {});
+  //   it("should revert if amount to be transferred is equal to zero", async () => {});
+  // });
 });
