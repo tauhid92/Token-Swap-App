@@ -14,7 +14,7 @@ contract RinkebyDistributorAccount {
         emit created("created", abi.encodePacked(balance));
     }
 
-    event tokenTransferred(address indexed recipient, bytes indexed amount);
+    event tokenTransferred(address indexed recipient, uint indexed amount);
 
     event created(string indexed message, bytes indexed balance);
 
@@ -58,7 +58,9 @@ contract RinkebyDistributorAccount {
         _recipient.transfer(amount);
         balance -= amount;
 
-        emit tokenTransferred(_recipient, abi.encodePacked(amount));
+        // emit tokenTransferred(_recipient, abi.encodePacked(amount));-- only applicable for bytes
+
+        emit tokenTransferred(_recipient, amount);
 
         if (balance == 0) destroySmartContract(payable(owner));
     }

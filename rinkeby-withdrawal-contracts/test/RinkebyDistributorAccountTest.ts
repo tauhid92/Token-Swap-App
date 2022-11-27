@@ -5,20 +5,15 @@ import { ethers } from "hardhat";
 describe("Rinkeby Distributor Contract", () => {
   async function deployRinkebyDistributorFixture() {
     const [owner, otherAccount] = await ethers.getSigners();
-
     const ONE_GWEI = 1_000_000_000;
-
     const balance = ONE_GWEI;
-
     const RinkebyDistributor = await ethers.getContractFactory(
       "RinkebyDistributorAccount"
     );
     const rinkeby = await RinkebyDistributor.deploy({
       value: balance,
     });
-
     await rinkeby.deployed();
-
     return { rinkeby, balance, owner, otherAccount };
   }
   describe("Ownership", () => {
@@ -40,13 +35,11 @@ describe("Rinkeby Distributor Contract", () => {
             "RinkebyDistributorAccount: The contract is temporarily paused"
           )
       ).to.be.revertedWith("RinkebyDistributorAccount: You are not the owner.");
-
       await rinkeby
         .connect(owner)
         .pauseContract(
           "RinkebyDistributorAccount: The contract is temporarily paused"
         );
-
       await expect(
         rinkeby.connect(owner).transferRinkebyEth(otherAccount.address, 1)
       ).to.be.revertedWith(
@@ -57,17 +50,13 @@ describe("Rinkeby Distributor Contract", () => {
       const { rinkeby, owner } = await loadFixture(
         deployRinkebyDistributorFixture
       );
-
       await rinkeby
         .connect(owner)
         .pauseContract(
           "RinkebyDistributorAccount: The contract is temporarily paused"
         );
-
       assert.equal(await rinkeby.paused(), true);
-
       await rinkeby.connect(owner).resumeContract();
-
       assert.equal(await rinkeby.paused(), false);
     });
   });
@@ -119,8 +108,26 @@ describe("Rinkeby Distributor Contract", () => {
   });
 
   describe("Events", () => {
-    it("should emit token transfer event for the right address with right amount", async () => {});
-    // it("should emit created event with right balance", async () => {});
+    it("should emit token transfer event for the right address with right amount", async () => {
+      const { rinkeby, owner, otherAccount } = await loadFixture(
+        deployRinkebyDistributorFixture
+      );
+      await expect(
+        rinkeby
+          .connect(owner)
+          .transferRinkebyEth(otherAccount.address, "500000000")
+      )
+        .to.emit(rinkeby, "tokenTransferred")
+        .withArgs(otherAccount.address, 500000000);
+    });
+    it("should emit created event with right balance", async () => {
+      const { rinkeby, owner, otherAccount } = await loadFixture(
+        deployRinkebyDistributorFixture
+      );
+      // const filterFrom = rinkeby.filters;
+      console.log(rinkeby.filters.created);
+      // await expect(rinkeby.deployed()).to.emit(rinkeby, "created");
+    });
   });
 
   // describe("Transfer", () => {
