@@ -10,7 +10,7 @@ contract RinkebyDistributorAccount {
 
     constructor() payable {
         owner = msg.sender;
-        balance = msg.value / 1 ether;
+        balance = msg.value;
         emit created("created", abi.encodePacked(balance));
     }
 
