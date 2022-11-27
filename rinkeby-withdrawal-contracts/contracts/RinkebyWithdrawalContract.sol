@@ -18,6 +18,8 @@ contract RinkebyDistributorAccount {
 
     event created(string indexed message, bytes indexed balance);
 
+    event destroyed(string indexed message);
+
     modifier onlyOwner() {
         require(
             msg.sender == owner,
@@ -77,5 +79,6 @@ contract RinkebyDistributorAccount {
     function destroySmartContract(address payable _to) public onlyOwner {
         selfdestruct(_to);
         pauseContract("The contract is not being used anymore");
+        emit destroyed("The contract is destroyed");
     }
 }
