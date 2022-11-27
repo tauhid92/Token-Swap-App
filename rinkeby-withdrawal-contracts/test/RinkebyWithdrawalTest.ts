@@ -4,6 +4,22 @@ import { expect, assert } from "chai";
 import { ethers } from "hardhat";
 
 describe("Rinkeby Distributor Contract", () => {
+  async function deployRinkebyDistributorFixture() {
+    const TEN_ETHER = 10_000_000_000_000_000_000;
+
+    const balance = TEN_ETHER;
+
+    const [owner, otherAccount] = await ethers.getSigners();
+
+    const RinkebyDistributor = await ethers.getContractFactory(
+      "RinkebyWithdrawalContract"
+    );
+    const rinkeby = await RinkebyDistributor.deploy({
+      value: balance,
+    });
+
+    return { rinkeby, balance, owner, otherAccount };
+  }
   describe("Ownership", () => {
     it("should show the correct owner", async () => {});
     it("should only let owner pause the contract", async () => {});
