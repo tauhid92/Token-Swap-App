@@ -5,23 +5,31 @@ import { ethers } from "hardhat";
 
 describe("Rinkeby Distributor Contract", () => {
   async function deployRinkebyDistributorFixture() {
-    const TEN_ETHER = 10_000_000_000_000_000_000;
+    const TWO_ETHER = ethers.constants.Two;
 
-    const balance = TEN_ETHER;
+    const balance = TWO_ETHER;
 
     const [owner, otherAccount] = await ethers.getSigners();
 
     const RinkebyDistributor = await ethers.getContractFactory(
-      "RinkebyWithdrawalContract"
+      "RinkebyDistributorAccount"
     );
     const rinkeby = await RinkebyDistributor.deploy({
       value: balance,
     });
 
+    await rinkeby.deployed();
+
     return { rinkeby, balance, owner, otherAccount };
   }
   describe("Ownership", () => {
-    it("should show the correct owner", async () => {});
+    it("should show the correct owner", async () => {
+      const { rinkeby, owner } = await loadFixture(
+        deployRinkebyDistributorFixture
+      );
+
+      assert.equal(await rinkeby.owner(), owner.address);
+    });
     it("should only let owner pause the contract", async () => {});
     it("should let owner resume the contract", async () => {});
   });
