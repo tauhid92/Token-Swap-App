@@ -36,8 +36,8 @@ contract RinkebyDistributorAccount {
     modifier withinBalance(uint amount) {
         // Check deposit amount
         require(
-            amount >= 0 && amount <= balance,
-            "RinkebyDistributorAccount: The transfer amount requested is higher than the current balance."
+            amount > 0 && amount <= balance,
+            "RinkebyDistributorAccount: The transfer amount requested is higher than the current balance. Or it is below minimum transfer amount"
         );
         _;
     }

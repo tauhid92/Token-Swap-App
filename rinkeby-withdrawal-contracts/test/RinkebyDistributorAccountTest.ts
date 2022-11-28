@@ -132,10 +132,45 @@ describe("Rinkeby Distributor Contract", () => {
     });
   });
 
-  // describe("Transfer", () => {
-  //   it("should only let owner transfer the tokens", async () => {});
-  //   it("should transfer only within balance", async () => {});
-  //   it("should revert if amount is higher than the balance", async () => {});
-  //   it("should revert if amount to be transferred is equal to zero", async () => {});
-  // });
+  describe("Transfer", () => {
+    it("should only let owner transfer the tokens", async () => {
+      const { rinkeby, owner, otherAccount } = await loadFixture(
+        deployRinkebyDistributorFixture
+      );
+      await expect(
+        rinkeby
+          .connect(owner)
+          .transferRinkebyEth(otherAccount.address, "200000000")
+      )
+        .to.emit(rinkeby, "tokenTransferred")
+        .withArgs(otherAccount.address, 200000000);
+      await expect(
+        rinkeby
+          .connect(otherAccount)
+          .transferRinkebyEth(otherAccount.address, "200000000")
+      ).to.be.revertedWith("RinkebyDistributorAccount: You are not the owner.");
+    });
+    it("should revert if amount is higher than the balance", async () => {
+      const { rinkeby, owner, otherAccount } = await loadFixture(
+        deployRinkebyDistributorFixture
+      );
+      await expect(
+        rinkeby
+          .connect(owner)
+          .transferRinkebyEth(otherAccount.address, "2000000000")
+      ).to.be.revertedWith(
+        "RinkebyDistributorAccount: The transfer amount requested is higher than the current balance. Or it is below minimum transfer amount"
+      );
+    });
+    it("should revert if amount to be transferred is equal to zero", async () => {
+      const { rinkeby, owner, otherAccount } = await loadFixture(
+        deployRinkebyDistributorFixture
+      );
+      await expect(
+        rinkeby.connect(owner).transferRinkebyEth(otherAccount.address, "0")
+      ).to.be.revertedWith(
+        "RinkebyDistributorAccount: The transfer amount requested is higher than the current balance. Or it is below minimum transfer amount"
+      );
+    });
+  });
 });
