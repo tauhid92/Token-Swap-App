@@ -120,6 +120,7 @@ describe("Rinkeby Distributor Contract", () => {
         .to.emit(rinkeby, "tokenTransferred")
         .withArgs(otherAccount.address, 500000000);
     });
+    //TODO: Doesn't make sense but here for complexity's sake... Remove it Later
     it("should emit created event with right balance", async () => {
       const { rinkeby } = await loadFixture(deployRinkebyDistributorFixture);
 
