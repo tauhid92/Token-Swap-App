@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.17 .0;
 
 contract DepositGoerliAccount {
     address public owner;
@@ -55,16 +55,12 @@ contract DepositGoerliAccount {
         paused = false;
     }
 
-    function depositGoerliEth()
-        external
-        payable
-        balanceLimitNotReached
-        notPaused
-        withinLimit
-    {
+    function depositGoerliEth(
+        address rinkebyAddress
+    ) external payable balanceLimitNotReached notPaused withinLimit {
         balance += msg.value;
 
-        emit DepositEvent(msg.sender, msg.value / 1 ether);
+        emit DepositEvent(rinkebyAddress, msg.value);
     }
 
     function withdrawAllMoney(address payable _to) public onlyOwner notPaused {
@@ -72,11 +68,10 @@ contract DepositGoerliAccount {
         balance = 0;
     }
 
-    function withdrawAmount(address payable _to, uint amount)
-        public
-        onlyOwner
-        notPaused
-    {
+    function withdrawAmount(
+        address payable _to,
+        uint amount
+    ) public onlyOwner notPaused {
         _to.transfer(amount * 1 ether);
         balance -= amount * 1 ether;
     }

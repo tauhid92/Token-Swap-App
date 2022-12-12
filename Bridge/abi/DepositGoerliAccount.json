@@ -43,7 +43,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "rinkebyAddress",
+        "type": "address"
+      }
+    ],
     "name": "depositGoerliEth",
     "outputs": [],
     "stateMutability": "payable",
