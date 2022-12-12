@@ -14,6 +14,8 @@ async function main() {
     const rinkeby_provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:51234/");
     const rinkeby_contract = new ethers.Contract(rinkeby_address, rinkeby_abi, rinkeby_provider);
 
+    let obj = {};
+
     goerli_contract.on("DepositEvent", (from, value, event) => {
         let info = {
             from: from,
@@ -21,7 +23,12 @@ async function main() {
             data: event
         }
         console.log(JSON.stringify(info, null, 4));
+
+        obj = event.args[1].toString()
+
+        console.log(obj);
     });
+
 
     // provider.once("block", () => {
     //     factoryContract.on('TokenCreated', newToken);
