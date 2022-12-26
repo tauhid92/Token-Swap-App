@@ -1,5 +1,7 @@
 <template>
-  <h1>Headers</h1>
+  <exchange-form></exchange-form>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import ExchangeForm from "../components/ExchangeForm.vue";
+</script>
 <style lang="scss"></style>
