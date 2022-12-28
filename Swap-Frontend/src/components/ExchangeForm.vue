@@ -11,20 +11,20 @@
         </div>
         <div class="form_input-cover_span2">
           <!-- the span will be a v-if and it will be invisible or stay as a placeholder some how till it is clicked-->
-          <!-- <span class="input-cover__span2__label">Amount</span> -->
+          <!-- <span class="form_input-cover_span2_label_amount">Amount</span> -->
           <label for="name" class="form_input-cover_span2_label">
             <span class="form_input-cover_span2_label_amount">Amount</span>
           </label>
           <input
             class="form_input-cover_span2_input"
             type="text"
-            placeholder="0.00"
+            autocomplete="off"
           />
         </div>
         <div class="input-cover__span3">
-          <button class="input-cover__span3__btn">
+          <!-- <button class="input-cover__span3__btn">
             <img src="../assets/exchange-2.svg" class="colorize" />
-          </button>
+          </button> -->
         </div>
       </label>
 
