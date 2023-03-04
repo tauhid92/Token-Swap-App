@@ -30,20 +30,34 @@
       &_field{
         position: relative;
         margin: 0.5rem 0.5rem;
-        font-size: 1.25rem;
         color: $amount-field-label-color;
-        &_input{
+        display: flex;
+        flex-direction: column;
+        &_input{  
           position: absolute;
-          top: 10;
-          left:0;
+          top: 0;
+          left:0;      
           background-color: transparent;
           border: none;
           outline: none;
-          caret-color: transparent;
+          caret-color: transparent;  
+          &:focus ~ label{
+            font-size: .7rem;
+            transform:translateY(-65%);
+          }
+          &:valid ~ label{
+            font-size: .7rem;
+            transform:translateY(-65%);
+          }
         }
         &_label{
-          
+          position: absolute;
+          top: 0;
+          left:0;
+          font-size: 1.25rem;
         }
+        
+        
       }
       &_icon{       
         svg{

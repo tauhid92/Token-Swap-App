@@ -9,11 +9,12 @@
             <use xlink:href="../assets/sprite.svg#ether-icon"></use>
         </svg>
       </div>
-      <div class="form_input-block_field">      
+      <div class="form_input-block_field"> 
+        <input class="form_input-block_field_input" id="amount" type="text">     
         <label class="form_input-block_field_input-label" for="amount">
-          <span class="form_input-block_field_input-label">Amount</span>
+          Amount
         </label>
-        <input class="form_input-block_field_input" id="amount" type="text">
+        
       </div>
       </div>
       <label class="form_label">Wallet Address from</label>
